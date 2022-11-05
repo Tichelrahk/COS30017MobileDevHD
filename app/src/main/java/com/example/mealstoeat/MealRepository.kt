@@ -7,8 +7,16 @@ import kotlinx.coroutines.flow.toList
 class MealRepository(context: Context) {
     var db: MealDao = AppDatabase.getInstance(context)?.mealDao()!!
 
-    fun loadAllMeals(): List<Meal> {
-        return db.loadAllMeals()
+    fun loadAllMealsByTime(): List<Meal> {
+        return db.loadAllMealsByTime()
+    }
+
+    fun loadAllMealsByRating(): List<Meal> {
+        return db.loadAllMealsByRating()
+    }
+
+    fun loadAllMealsByName(): List<Meal> {
+        return db.loadAllMealsByName()
     }
 
     fun insertMeal(meal: Meal){
@@ -16,7 +24,7 @@ class MealRepository(context: Context) {
     }
 
     fun deleteAll(){
-        val meals = loadAllMeals()
+        val meals = loadAllMealsByTime()
         for (meal in meals){
             db.deleteMeal(meal)
         }

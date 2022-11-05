@@ -3,6 +3,7 @@ package com.example.mealstoeat
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cloudinary.android.MediaManager
 import com.cloudinary.android.ResponsiveUrl
+import com.google.android.material.navigation.NavigationView
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.runBlocking
 import java.time.Clock
@@ -24,8 +26,10 @@ import java.time.ZoneId
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
+
     lateinit var drawerLayout: DrawerLayout
     lateinit var actionBarDrawerToggle: ActionBarDrawerToggle
+    lateinit var navView: NavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,10 +43,48 @@ class MainActivity : AppCompatActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+        navView = findViewById(R.id.nav_view)
+        val menuIntent = Intent(this, MainActivity::class.java)
+        var order = ""
+
+        navView.setNavigationItemSelectedListener {
+            when (it.itemId) {
+                R.id.orderRatings -> {
+                    order = "ratings"
+                    menuIntent.putExtra("order", order)
+                    startActivity(menuIntent)
+                    true
+                }
+                R.id.orderName -> {
+                    order = "name"
+                    menuIntent.putExtra("order", order)
+                    startActivity(menuIntent)
+                    true
+                }
+                else -> {
+                    order = "time"
+                    menuIntent.putExtra("order", order)
+                    startActivity(menuIntent)
+                    true
+                }
+            }
+        }
+
         val fab = findViewById<View>(R.id.fab_add)
         val createIntent = Intent(this, DetailActivity::class.java)
         fab.setOnClickListener(){
             startActivity(createIntent)
+        }
+
+        val nameValid = intent.getBooleanExtra("nameValid", false)
+        val ratingValid = intent.getBooleanExtra("ratingValid", false)
+        val imgValid = intent.getBooleanExtra("imgValid", false)
+        val valid = intent.getBooleanExtra("valid", false)
+
+//        check if data was received
+        if (nameValid || ratingValid || imgValid || valid){
+            val bottomSheetFragment = BottomSheetFragment(nameValid, ratingValid, imgValid, valid)
+            bottomSheetFragment.show(supportFragmentManager, "BottomSheetDialog")
         }
     }
 
@@ -66,7 +108,16 @@ class MainActivity : AppCompatActivity() {
 //        mealDB.insertMeal(meal3)
 //        mealDB.insertMeal(meal4)
 
-        var meals = mealDB.loadAllMeals()
+        val orderBy = this.intent.getStringExtra("order")
+
+        var meals = mealDB.loadAllMealsByTime()
+
+        orderBy.let {
+            when (orderBy) {
+                "name" -> meals = mealDB.loadAllMealsByName()
+                "ratings" -> meals = mealDB.loadAllMealsByRating()
+            }
+        }
 
         mealList.adapter = MealRowAdapter(meals)
         mealList.layoutManager = LinearLayoutManager(this)

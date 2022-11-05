@@ -10,6 +10,7 @@ import android.provider.OpenableColumns
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.cloudinary.android.MediaManager
 import com.squareup.picasso.Picasso
@@ -72,7 +73,6 @@ class DetailActivity : AppCompatActivity() {
 
 
     override fun onBackPressed() {
-        super.onBackPressed()
         val mealDB = MealRepository(this)
         val receivedMeal = intent.getIntExtra("record", 0)
 
@@ -84,20 +84,60 @@ class DetailActivity : AppCompatActivity() {
 
         var meal = Meal("","", time, 0, "")
 
+        var nameValid = false
+        var ratingValid = false
+        var imgValid = false
+
+        var valid = false
 
         if (receivedMeal != 0) {
             meal = mealDB.findMeal(receivedMeal)
         }
 
-        detailImg.tag?.let {
-            uploadImg(detailImg, meal)
+        if (detailName.text.isNotEmpty() && detailName.text.toString() != "Create Meal") {
+            nameValid = true
         }
 
-        meal.meal_name = detailName.text.toString()
-        meal.rating = detailRating.text.toString().toLong()
-        meal.notes = detailNotes.text.toString()
+        if (detailRating.text.isNotEmpty()){
+            val rate = detailRating.text.toString().toLongOrNull()
+            if (rate != null){
+                if (0 <= rate && rate <= 10){
+                    ratingValid = true
+                }
+            }
+        }
 
-        mealDB.insertMeal(meal)
+        if (detailImg.drawable != null){
+            imgValid = true
+        }
+
+        if (nameValid && ratingValid && imgValid){
+            valid = true
+        }
+
+
+        if (valid) {
+//            Create and insert the meal
+            detailImg.tag?.let {
+                uploadImg(detailImg, meal)
+            }
+            meal.meal_name = detailName.text.toString()
+            meal.rating = detailRating.text.toString().toLong()
+            meal.notes = detailNotes.text.toString()
+            mealDB.insertMeal(meal)
+        }
+
+        val bottomSheetFragment = BottomSheetFragment(nameValid, ratingValid, imgValid, valid)
+        bottomSheetFragment.show(supportFragmentManager, "BottomSheetDialog")
+
+        val intent = Intent(this, MainActivity::class.java)
+        intent.putExtra("nameValid", nameValid)
+        intent.putExtra("ratingValid", ratingValid)
+        intent.putExtra("imgValid", imgValid)
+        intent.putExtra("valid", valid)
+        startActivity(intent)
+
+//        super.onBackPressed()
     }
 
     @SuppressLint("Range")

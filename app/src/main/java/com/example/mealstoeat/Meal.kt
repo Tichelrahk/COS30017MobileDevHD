@@ -20,6 +20,15 @@ data class Meal(
 
 @Dao
 interface MealDao {
+    @Query("SELECT * FROM meal ORDER BY date DESC")
+    fun loadAllMealsByTime(): List<Meal>
+
+    @Query("SELECT * FROM meal ORDER BY rating DESC")
+    fun loadAllMealsByRating(): List<Meal>
+
+    @Query("SELECT * FROM meal ORDER BY meal_name ASC")
+    fun loadAllMealsByName(): List<Meal>
+
     @Query("SELECT * FROM meal")
     fun loadAllMeals(): List<Meal>
 

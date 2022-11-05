@@ -4,4 +4,9 @@
     <!-- to toggle the open close button of the navigation drawer -->
     <string name="nav_open">Open</string>
     <string name="nav_close">Close</string>
+    <string name="ratingWarning">Invalid Rating: rating must be a number between 0 and 10</string>
+    <string name="nameWarning">Invalid Name: Please enter a name</string>
+    <string name="imgWarning">Invalid Image: Please pick an image</string>
+    <string name="success">Meal Saved</string>
+    <string name="nosuccess">Meal Not Saved</string>
 </resources>
