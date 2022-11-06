@@ -20,7 +20,7 @@ import java.time.Clock
 import java.time.ZoneId
 
 class DetailActivity : AppCompatActivity() {
-
+//Set preview image
     private val previewImage by lazy { findViewById<ImageView>(R.id.detailImg) }
 
     private val getImageURIResult = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
@@ -46,6 +46,7 @@ class DetailActivity : AppCompatActivity() {
 
         val mealDB = MealRepository(this)
 
+//        Edit or Create
         if (receivedMeal != 0){
             val meal = mealDB.findMeal(receivedMeal)
             detailName.setText(meal.meal_name)
@@ -53,7 +54,6 @@ class DetailActivity : AppCompatActivity() {
 
             Picasso.get().load(MediaManager.get().url().generate(meal.image)).into(detailImg)
             detailNotes.setText(meal.notes)
-
 
             fabRemove.setOnClickListener(){
                 mealDB.deleteMeal(meal)
@@ -84,6 +84,7 @@ class DetailActivity : AppCompatActivity() {
 
         var meal = Meal("","", time, 0, "")
 
+//        Validation
         var nameValid = false
         var ratingValid = false
         var imgValid = false

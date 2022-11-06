@@ -7,6 +7,7 @@ import com.cloudinary.android.download.picasso.PicassoDownloadRequestBuilderFact
 class MainApplication: Application() {
     override fun onCreate() {
         super.onCreate()
+//        Cloudinary Setup
         MediaManager.init(this)
         MediaManager.get().setDownloadRequestBuilderFactory(PicassoDownloadRequestBuilderFactory())
     }

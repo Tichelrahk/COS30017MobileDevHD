@@ -39,7 +39,6 @@ class MealRowAdapter (private val data: List<Meal>) : RecyclerView.Adapter<MealR
             mealRating.text = item.rating.toString()
             Picasso.get().load(MediaManager.get().url().generate(item.image)).into(mealImg)
 
-
             v.setOnClickListener{
                 val i = Intent(it.context, DetailActivity::class.java)
                 i.putExtra("record", item.id)
